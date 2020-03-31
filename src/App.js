@@ -1,53 +1,31 @@
 import React, { Component } from 'react';
-import API from './lib/API';
+import ShowData from './Components/ShowData.js';
 
-class App extends Component {
+export default class App extends Component {
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      loaded: false,
-      data: []
-    };
+  state = {
+    data: [
+      { id: 1, name: "Paul"}, { id: 2, name: "John"},
+      { id: 3, name: "George"}, { id: 4, name: "Ringo"},
+    ]
   }
 
-  componentDidMount() {
-
-    API.fetchData()
-    .then( data => {
-      console.log(data);
-      this.setState({ data: data })
-    })
-    .catch(error => { // doe iets met de error 
-    });
+  handleDelete = (id) => {
+    var data = this.state.data.filter( item => item.id !== id );
+    this.setState({ data: data });
+    console.log("Handle Delete!!", id );
   }
+
   
   render() {
-    if(this.state.isLoaded) {
-      return(
-        <div>
-          <ul>
-            {
-              this.state.data.map( (item) => {
-                return(
-                  <li key={ item.id.toString() }>
-                    <div>
-                      <img src={ item.img } style={{ width: 100, height: 100}} />
-                      <p>{ item.title }</p>
-                    </div>
-                  </li>)
-              })
-            }
-          </ul>
-        </div>
-      );
-    }
-    else {
-      return(
-        <div><h1>Loading...</h1></div>
-      );
-    }
+    return(
+      <div className="m-5">
+      {
+        this.state.data.map( item => {
+          return( <ShowData key={ item.id } data={ item } onDelete={ this.handleDelete } />)
+        })
+      }
+      </div>
+    )
   }
 }
-
-export default App;
