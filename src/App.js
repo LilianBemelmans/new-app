@@ -1,22 +1,52 @@
 import React, { Component } from 'react';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
-
-import News from './Components/News';
-import Home from './Components/Home';
-import NotFound from './Components/NotFound';
+import API from './lib/API';
 
 class App extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      loaded: false,
+      data: []
+    };
+  }
+
+  componentDidMount() {
+
+    API.fetchData()
+    .then( data => {
+      console.log(data);
+      this.setState({ data: data })
+    })
+    .catch(error => { // doe iets met de error 
+    });
+  }
   
   render() {
-    return(
-      <BrowserRouter>
-        <Switch>
-          <Route path="/" component={ Home } exact={ true } />
-          <Route path="/news/:data" component={ News } exact />
-          <Route component={ NotFound }/>
-        </Switch>
-      </BrowserRouter>
-    );
+    if(this.state.isLoaded) {
+      return(
+        <div>
+          <ul>
+            {
+              this.state.data.map( (item) => {
+                return(
+                  <li key={ item.id.toString() }>
+                    <div>
+                      <img src={ item.img } style={{ width: 100, height: 100}} />
+                      <p>{ item.title }</p>
+                    </div>
+                  </li>)
+              })
+            }
+          </ul>
+        </div>
+      );
+    }
+    else {
+      return(
+        <div><h1>Loading...</h1></div>
+      );
+    }
   }
 }
 
